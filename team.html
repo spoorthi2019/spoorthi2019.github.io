@@ -2,7 +2,7 @@
 <html>
 
 
-<!-- Mirrored from tryst-iitd.com/ by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 16 Feb 2019 05:00:28 GMT -->
+<!-- Mirrored from tryst-iitd.com/team by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 16 Feb 2019 05:01:00 GMT -->
 <!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
 <head>
     <meta name="generator" content="Hugo 0.27.1">
@@ -88,189 +88,12 @@
         }
 
     </style>
-    <link rel="stylesheet" href="scss/stylesheets/main.css%401547178501.css">
+    <link rel="stylesheet" href="scss/stylesheets/main.css%401547178502.css">
     <!-- Load the Paper.js library -->
     <!-- <script type="text/javascript" src="js/paper.js"></script> -->
-	<!-- <script type="text/javascript" src="js/main.js"></script> -->
+    <script src="../ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- <script type="text/javascript" src="js/main.js"></script> -->
     <!-- Define inlined PaperScript associate it with myCanvas -->
-    <script type="text/paperscript" canvas="myCanvas">
-        var width, height, center;
-		var points = 10;
-		var smooth = true;
-		var path = new Path();
-		var mousePos = view.center / 2;
-		var pathHeight = mousePos.y;
-		path.fillColor = 'red';
-		initializePath();
-
-		function initializePath() {
-			center = view.center;
-			width = view.size.width;
-			height = view.size.height / 2;
-			path.segments = [];
-			path.add(view.bounds.bottomLeft);
-			for (var i = 1; i < points; i++) {
-				var point = new Point(width / points * i, center.y);
-				path.add(point);
-			}
-			path.add(view.bounds.bottomRight);
-			path.fullySelected = true;
-		}
-
-		function onFrame(event) {
-			pathHeight += (center.y - mousePos.y - pathHeight) / 10;
-			for (var i = 1; i < points; i++) {
-				var sinSeed = event.count + (i + i % 10) * 100;
-				var sinHeight = Math.sin(sinSeed / 200) * pathHeight;
-				var yPos = Math.sin(sinSeed / 100) * sinHeight + height;
-				path.segments[i].point.y = yPos;
-			}
-			if (smooth)
-				path.smooth({ type: 'continuous' });
-		}
-
-		function onMouseMove(event) {
-			mousePos = event.point;
-		}
-
-		function onMouseDown(event) {
-			smooth = !smooth;
-			if (!smooth) {
-				// If smooth has been turned off, we need to reset
-				// the handles of the path:
-				for (var i = 0, l = path.segments.length; i < l; i++) {
-					var segment = path.segments[i];
-					segment.handleIn = segment.handleOut = null;
-				}
-			}
-		}
-
-		// Reposition the path whenever the window is resized:
-		function onResize(event) {
-			initializePath();
-		}
-
-	</script>
-	<script type="text/paperscript" canvas="myCanvas2">
-		// Ported from original Metaball script by SATO Hiroyuki
-		// http://park12.wakwak.com/~shp/lc/et/en_aics_script.html
-		project.currentStyle = {
-			fillColor: 'red'
-		};
-
-		var ballPositions = [[255, 129], [610, 73], [486, 363],
-			[117, 459], [484, 726], [843, 306], [789, 615], [1049, 82],
-			[1292, 428], [1117, 733], [1352, 86], [92, 798]];
-
-		var handle_len_rate = 2.4;
-		var circlePaths = [];
-		var radius = 50;
-		for (var i = 0, l = ballPositions.length; i < l; i++) {
-			var circlePath = new Path.Circle({
-				center: ballPositions[i],
-				radius: 50
-			});
-			circlePaths.push(circlePath);
-		}
-
-		var largeCircle = new Path.Circle({
-			center: [676, 433],
-			radius: 100
-		});
-		circlePaths.push(largeCircle);
-
-		function onMouseMove(event) {
-			largeCircle.position = event.point;
-			generateConnections(circlePaths);
-		}
-
-		var connections = new Group();
-		function generateConnections(paths) {
-			// Remove the last connection paths:
-			connections.children = [];
-
-			for (var i = 0, l = paths.length; i < l; i++) {
-				for (var j = i - 1; j >= 0; j--) {
-					var path = metaball(paths[i], paths[j], 0.5, handle_len_rate, 300);
-					if (path) {
-						connections.appendTop(path);
-						path.removeOnMove();
-					}
-				}
-			}
-		}
-
-		generateConnections(circlePaths);
-
-		// ---------------------------------------------
-		function metaball(ball1, ball2, v, handle_len_rate, maxDistance) {
-			var center1 = ball1.position;
-			var center2 = ball2.position;
-			var radius1 = ball1.bounds.width / 2;
-			var radius2 = ball2.bounds.width / 2;
-			var pi2 = Math.PI / 2;
-			var d = center1.getDistance(center2);
-			var u1, u2;
-
-			if (radius1 == 0 || radius2 == 0)
-				return;
-
-			if (d > maxDistance || d <= Math.abs(radius1 - radius2)) {
-				return;
-			} else if (d < radius1 + radius2) { // case circles are overlapping
-				u1 = Math.acos((radius1 * radius1 + d * d - radius2 * radius2) /
-						(2 * radius1 * d));
-				u2 = Math.acos((radius2 * radius2 + d * d - radius1 * radius1) /
-						(2 * radius2 * d));
-			} else {
-				u1 = 0;
-				u2 = 0;
-			}
-
-			var angle1 = (center2 - center1).getAngleInRadians();
-			var angle2 = Math.acos((radius1 - radius2) / d);
-			var angle1a = angle1 + u1 + (angle2 - u1) * v;
-			var angle1b = angle1 - u1 - (angle2 - u1) * v;
-			var angle2a = angle1 + Math.PI - u2 - (Math.PI - u2 - angle2) * v;
-			var angle2b = angle1 - Math.PI + u2 + (Math.PI - u2 - angle2) * v;
-			var p1a = center1 + getVector(angle1a, radius1);
-			var p1b = center1 + getVector(angle1b, radius1);
-			var p2a = center2 + getVector(angle2a, radius2);
-			var p2b = center2 + getVector(angle2b, radius2);
-
-			// define handle length by the distance between
-			// both ends of the curve to draw
-			var totalRadius = (radius1 + radius2);
-			var d2 = Math.min(v * handle_len_rate, (p1a - p2a).length / totalRadius);
-
-			// case circles are overlapping:
-			d2 *= Math.min(1, d * 2 / (radius1 + radius2));
-
-			radius1 *= d2;
-			radius2 *= d2;
-
-			var path = new Path({
-				segments: [p1a, p2a, p2b, p1b],
-				style: ball1.style,
-				closed: true
-			});
-			var segments = path.segments;
-			segments[0].handleOut = getVector(angle1a - pi2, radius1);
-			segments[1].handleIn = getVector(angle2a + pi2, radius2);
-			segments[2].handleOut = getVector(angle2b - pi2, radius2);
-			segments[3].handleIn = getVector(angle1b + pi2, radius1);
-			return path;
-		}
-
-		// ------------------------------------------------
-		function getVector(radians, length) {
-			return new Point({
-				// Convert radians to degrees:
-				angle: radians * 180 / Math.PI,
-				length: length
-			});
-		}
-	</script>
 	<style type="text/css">
 		@media (max-width: 991px) {
 			section {
@@ -283,7 +106,6 @@
 				/*background-image: url('images/statues/Story 1/mobile/stone_mobile.png');*/
 				background-repeat: no-repeat;
 				background-size: 100%;
-				background-position: 50vw;
 			}
 			#sec2 {
 				/*background-image: url('images/statues/Story 1/mobile/Chariot Combined.png');*/
@@ -301,13 +123,13 @@
 				/*background-image: url('images/statues/Story 1/mobile/Bike Combined.png');*/
 				background-repeat: no-repeat;
 				background-size: 100%;
-				background-position: 32vw;
+				background-position: 38vw;
 			}
 			#sec5 {
 				/*background-image: url('images/statues/Story 1/mobile/car_mobile.png');*/
 				background-repeat: no-repeat;
 				background-size: 100%;
-				background-position: 20vw 0vw;
+				background-position: 40vw 0vw;
 			}
 			#scroll_more {
 				/*position: absolute;*/
@@ -343,23 +165,20 @@
 			border-radius: 5%;
 			border: #fff solid 1px;
 		}
+		.register {
+			background-color: #ccc;
+			opacity: 0.5;
+			min-height: 7vh;
+			border-radius: 0px;
 
-		#galleryArea {
-            display: block;
-        }
-
-        body {
-        	background: #274763;
-        }
-
+		}
 	</style>
 	<script type="text/javascript">
-		document.body.className += ' fade-out';
 	</script>
 </head>
 
-<body id="body" class="header-fixed-top bg-particles dynamic-backgrounds fade-out" style="background-size: cover !important;">
-    <!-- <div id="awwwards" class="honorable white right"><a href="https://www.awwwards.com/sites/rocka-tech-venture-builder" target="_blank">Awwwards</a></div> -->
+<body id="body" class="about-content header-fixed-top bg-particles dynamic-backgrounds">
+    <div id="awwwards" class="honorable white right"><a href="https://www.awwwards.com/sites/rocka-tech-venture-builder" target="_blank">Awwwards</a></div>
     <nav id="headerFixedTop" class="header navbar navbar-toggleable-md navbar-inverse bg-transparent fixed-top"><a class="navbar-responsive" href="#" data-aos="fade" data-aos-duration="800" data-aos-once="true" data-toggle="modal" data-target="#responsiveMenu"><div id="menuToggle" class="hamburguer"><span></span> <span></span> <span></span></div><div class="text-hamburguer">MENU</div></a><a class="navbar-brand" href="index.html" data-aos="fade" data-aos-duration="800" data-aos-once="true"><div id="navbarBrandLogo" class="navbar-brand-logo logo-white"></div><div id="navbarBrandLogo" class="navbar-brand-logo logo-black"></div></a>
         <div class="collapse navbar-collapse spacing-2">
             <ul class="navbar-nav m-auto" data-aos="fade" data-aos-duration="800" data-aos-once="true">
@@ -379,146 +198,145 @@
         </div>
     </nav>
     <div class="content">
-        <section class="content-section banner-section change-color-content bg_primary">
-        	<!-- <canvas id="myCanvas" resize style="opacity: 0.1; width: 100vw; z-index: -10; position: fixed;"></canvas> -->
-        	<center>
-            <div class="container text-center">
-                <div class="row">
-                    <div class="col-xl-12 offset-xl-0 col-lg-8 offset-lg-2 col-md-10 offset-md-1 col-sm-8 offset-sm-2 col-12 offset-xs-0"><h1 data-aos="fade-up" data-aos-delay="100" data-aos-duration="600" data-aos-offset="0" data-aos-once="true" data-aos-once="true" style="letter-spacing: 0.36em; font-size: 9vw; margin-top: 11vw;">EVOLUTION</h1>
-                        <p class="banner-description" data-aos="fade-up" data-aos-delay="200" data-aos-duration="600" data-aos-offset="0" data-aos-once="true" data-aos-once="true" style="word-spacing: 1.28em; letter-spacing: 0.63em; font-size: 2.5vw;">A SPIRAL IN TIME</p><small id="scroll_more" class="alpha-8 visible-sm" data-aos="fade-up" data-aos-delay="300" data-aos-duration="600" data-aos-offset="0" data-aos-once="true" data-aos-once="true"><br>TRYST<br>IIT DELHI<br>1st &#8210; 4th MARCH 2019</small></div>
+        <section class="change-color-content bg_primary section-bg-particles" data-particles-color="_grey">
+            <div class="container text-center"><!-- <h1 class="text-title text-parallax-0 text_secundary_red" data-aos="fade-up" data-aos-delay="100" data-aos-duration="600" data-aos-offset="90" data-aos-once="true">REGISTRATION</h1>
+                <div class="text-parallax-1"><h1 class="text_secundary_blue" data-aos="fade-up" data-aos-delay="100" data-aos-duration="600" data-aos-offset="90" data-aos-once="true">REGISTRATION</h1>
+                </div>
+                <div class="text-parallax-2"><h1 class="text_primary" data-aos="fade-up" data-aos-delay="100" data-aos-duration="600" data-aos-offset="90" data-aos-once="true">REGISTRATION</h1>
+                </div> -->
+                <p class="text-large text-subtitle" data-aos="fade-up" data-aos-delay="200" data-aos-duration="600" data-aos-offset="90" data-aos-once="true"><strong></strong>&nbsp;<br></p>
+                <div class="row" style=" display: flex; justify-content: center;">
+                	<center>
+                		<div class="container" style="opacity: 0.8; background-color: #072744; padding: 2vw; color: white;">
+                			<h1 style="color: white;">Our Team</h1>
+                            <!-- <h3 style="color: white;">Capability wins over Disability</h3> -->
+                			<div class="row">
+                                <div class="col-sm">
+                                    Abhinav Arora<br>
+                                    Overall Co-ordinator<br>
+                                    <a class="btn" href="mailto:admin@tryst-iitd.com">admin@tryst-iitd.com</a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm">
+                                    Vatsal Sharma<br>
+                                    CTM, Infra and Workshop<br>
+                                    <a class="btn" href="mailto:tryst2019.workshops@tryst-iitd.com">workshops@tryst-iitd.com</a>
+                                </div>
+                                <div class="col-sm">
+                                    Adit Gupta<br>
+                                    CTM, Admin and Finance<br>
+                                    <a class="btn" href="mailto:finance@tryst-iitd.com">finance@tryst-iitd.com</a>
+                                </div>
+                                <div class="col-sm">
+                                    Siddharth Khera<br>
+                                    CTM, Events and Social<br>
+                                    <a class="btn" href="mailto:events@tryst-iitd.com">events@tryst-iitd.com</a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm">
+                                    Kartikeya Sharma<br>
+                                    CTM, Publicity and Creative<br>
+                                    <a class="btn" href="mailto:publicity@tryst-iitd.com">publicity@tryst-iitd.com</a>
+                                </div>
+                                <div class="col-sm">
+                                    Yash Agarwal<br>
+                                    CTM, Guest Lecture<br>
+                                    <a class="btn" href="mailto:guest@tryst-iitd.com">guest@tryst-iitd.com</a>
+                                </div>
+                                <div class="col-sm">
+                                    Abhishree Arora<br>
+                                    CTM, Marketing<br>
+                                    <a class="btn" href="mailto:marketing@tryst-iitd.com">marketing@tryst-iitd.com</a>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-sm">
+                                    Ayush Patel<br>
+                                    Technical Co-ordinator<br>
+                                    <a class="btn" href="mailto:patel.ayush08@gmail.com">patel.ayush08@gmail.com</a>
+                                </div>
+                                <div class="col-sm">
+                                    Arpan Mangal<br>
+                                    Technical Co-ordinator<br>
+                                    <a class="btn" href="mailto:mangalarpan@gmail.com">mangalarpan@gmail.com</a>
+                                </div>
+                            </div>
+                            <!-- <table width="100%" style="text-align: center; max-width: 90vw;">
+                            <tr>
+                                <td></td>
+                                <td>
+                                    Abhinav Arora<br>
+                                    Overall Co-ordinator<br>
+                                    <a class="btn" href="mailto:admin@tryst-iitd.com">admin@tryst-iitd.com</a>
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Vatsal Sharma<br>
+                                    CTM, Infra and Workshop<br>
+                                    <a class="btn" href="mailto:tryst2019.workshops@tryst-iitd.com">workshops@tryst-iitd.com</a>
+                                </td>
+                                <td>
+                                    Adit Gupta<br>
+                                    CTM, Admin and Finance<br>
+                                    <a class="btn" href="mailto:finance@tryst-iitd.com">finance@tryst-iitd.com</a>
+                                </td>
+                                <td>
+                                    Siddharth Khera<br>
+                                    CTM, Events and Social<br>
+                                    <a class="btn" href="mailto:events@tryst-iitd.com">events@tryst-iitd.com</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Kartikeya Sharma<br>
+                                    CTM, Publicity and Creative<br>
+                                    <a class="btn" href="mailto:publicity@tryst-iitd.com">publicity@tryst-iitd.com</a>
+                                </td>
+                                <td>
+                                    Yash Agarwal<br>
+                                    CTM, Guest Lecture<br>
+                                    <a class="btn" href="mailto:guest@tryst-iitd.com">guest@tryst-iitd.com</a>
+                                </td>
+                                <td>
+                                    Abhishree Arora<br>
+                                    CTM, Marketing<br>
+                                    <a class="btn" href="mailto:marketing@tryst-iitd.com">marketing@tryst-iitd.com</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Ayush Patel<br>
+                                    Technical Co-ordinator<br>
+                                    <a class="btn" href="mailto:patel.ayush08@gmail.com">patel.ayush08@gmail.com</a>
+                                </td>
+                                <td></td>
+                                <td>
+                                    Arpan Mangal<br>
+                                    Technical Co-ordinator<br>
+                                    <a class="btn" href="mailto:mangalarpan@gmail.com">mangalarpan@gmail.com</a>
+                                </td>
+                                <td></td>
+                            </tr>
+                            </table> -->
+                	</center>
                 </div>
             </div>
-            </center>
-            <div class="scroll-info hidden-sm">
-                <div data-aos="fade" data-aos-delay="300" data-aos-duration="600" data-aos-offset="90" data-aos-once="true" data-aos-once="true"><small class="alpha-6" style="font-size: 1em; letter-spacing: 0.4em; word-spacing: 1.0em;">1<small style="font-size: 0.7em">ST</small> &#8210; 4<small style="font-size: 0.7em">TH</small> MARCH 2019</small></div>
-            </div>
-            <div class="scroll-info2 hidden-sm">
-                <div data-aos="fade" data-aos-delay="300" data-aos-duration="600" data-aos-offset="90" data-aos-once="true" data-aos-once="true"><small class="alpha-6" style="font-size: 1em; letter-spacing: 0.8em; word-spacing: 1.4em; line-height: 1.2em;">TRYST IIT DELHI</small></div>
-            </div>
+           <!--  <div class="scroll-info hidden-xs">
+                <div data-aos="fade" data-aos-delay="300" data-aos-duration="600" data-aos-offset="90" data-aos-once="true" data-aos-once="true"><small class="alpha-4">SCROLL FOR MORE →</small></div>
+            </div> -->
         </section>
-        <section id="sec1" class="content-section companies-section change-color-content bg_grey section-bg-particles parallax-content" data-bg-offset="400" data-particles-color="_secundary_blue" data-particles-alpha="0.9">
+        <section class="content-section content-general change-color-content bg_grey section-bg-particles slider-backgrounds-before" data-particles-color="_primary" data-particles-alpha="0.5">
             <div class="container">
-                <div class="statue">
-                    <div class="story1 wrapper-image-statue-5 wrapper-image-statue-5_shadow parallax-image" data-speed="20" data-transiton="0.2s" data-parent-section="companies-section" style="position:absolute; left: -400px; top:-50px;"><img src="images/statues/Story%201/stone_shadow.png"  width="1000"></div>
-                        <div class="story1 wrapper-image-statue-5 parallax-image" data-speed="30" data-transiton="0.2s" data-parent-section="companies-section" style="position:absolute; left: -300px; top:-200px; z-index: 1;"><img src="images/statues/Story%201/stone.png" width="1000"></div>
-                    <div class="story2 wrapper-image-statue-5 wrapper-image-statue-5_shadow parallax-image" data-speed="20" data-transiton="0.2s" data-parent-section="companies-section" style="position:absolute; left: -140px; top:0px;"><img src="images/statues/Story%202/1%20Shadow.png"  width="600"></div>
-                        <div class="story2 wrapper-image-statue-5 parallax-image" data-speed="30" data-transiton="0.2s" data-parent-section="companies-section" style="position:absolute; left: -100px; top:-100px; z-index: 1;"><img src="images/statues/Story%202/1.png" width="600"></div>
-                    <div class="story3 wrapper-image-statue-5 wrapper-image-statue-5_shadow parallax-image" data-speed="20" data-transiton="0.2s" data-parent-section="companies-section" style="position:absolute; left: -150px; top:-50px;"><img src="images/statues/Story%203/1%20Shadow.png"  width="800"></div>
-                        <div class="story3 wrapper-image-statue-5 parallax-image" data-speed="30" data-transiton="0.2s" data-parent-section="companies-section" style="position:absolute; left: -120px; top:-150px; z-index: 1;"><img src="images/statues/Story%203/1.png" width="800"></div>
-                    <div class="story4 wrapper-image-statue-5 wrapper-image-statue-5_shadow parallax-image" data-speed="20" data-transiton="0.2s" data-parent-section="companies-section" style="position:absolute; left: -300px; top:-50px;"><img src="images/statues/Story%204/1%20Shadow.png"  width="800"></div>
-                        <div class="story4 wrapper-image-statue-5 parallax-image" data-speed="30" data-transiton="0.2s" data-parent-section="companies-section" style="position:absolute; left: -200px; top:-200px; z-index: 1;"><img src="images/statues/Story%204/1.png" width="800"></div>
-                        </div>
-                        <div class="row description right">
-                            <div class="col-xl-5 offset-xl-6 col-lg-6 offset-lg-6 col-md-8 offset-md-0 col-sm-8 offset-sm-0 col-8 offset-0">
-                                <p class="small-text" data-aos="fade-up" data-aos-duration="600" data-aos-offset="90" data-aos-once="true" data-aos-once="true"><small class="story1">WHEEL</small><br><small class="alpha-4 story1">4500-3300 BC</small><small class="story2">SUNDIAL</small><br><small class="alpha-4 story2">293 BC</small><small class="story3">ABACUS</small><br><small class="alpha-4 story3">500 BC</small><small class="story4">GRAHAM BELL TELEPHONE</small><br><small class="alpha-4 story4">1876 AD</small></p><h2 data-aos="fade-up" data-aos-delay="100" data-aos-duration="600" data-aos-offset="100" data-aos-once="true" data-aos-once="true">IMAGINE<br>INNOVATE<br>EVOLVE</h2>
-                                <p data-aos="fade-up" data-aos-delay="200" data-aos-duration="600" data-aos-offset="90" data-aos-once="true" data-aos-once="true">The largest technical festival of Northern India, in its 28th edition, invites you to look at the world with the lens of evolution, all the way from language to technology. This Tryst, experience a journey that unravels technical advances through time and discovers the origins of the world as we see today.</p>
-                                <!-- <div data-aos="fade-up" data-aos-delay="300" data-aos-duration="600" data-aos-offset="90" data-aos-once="true" data-aos-once="true"><a href="/enterprise" class="btn btn-secundary-blue large-width">DISCOVER ROCKA ENTERPRISE →</a></div> -->
-                            </div>
-                        </div>
+                <div class="row description-wrapper pd-bt-0">
+                    <div class="col-md-12 text-center">
+                        <p class="small-text" data-aos="fade-up" data-aos-duration="600" data-aos-offset="90" data-aos-once="true"><small class="alpha-4">TRYST</small><br><small>IIT DELHI</small></p><h1 class="title-text title-with-subtitle" data-aos="fade-up" data-aos-delay="100" data-aos-duration="600" data-aos-offset="90" data-aos-once="true">EVOLUTION</h1><h3>A SPIRAL IN TIME</h3><h2 class="title-subtitle mg-bt-0" data-aos="fade-up" data-aos-delay="100" data-aos-duration="600" data-aos-offset="90" data-aos-once="true">IMAGINE. INNOVATE. EVOLVE.</h2>
                     </div>
-        </section>
-        <section id="sec2" class="content-section change-color-content bg_secundary_blue section-bg-particles parallax-content" data-bg-offset="400" data-particles-color="_grey">
-            <div class="container">
-                <div class="statue">
-                    <div class="story1 wrapper-image-statue-7 wrapper-image-statue-7_shadow parallax-image" data-speed="10" data-transiton="0.2s ease-out" data-parent-section="products-section"  style="position:absolute; right: -400px; top:-250px;"><img src="images/statues/Story%201/Chariot%20Shadow.png" width="800"></div>
-                        <div class="story1 wrapper-image-statue-7 parallax-image" data-speed="30" data-transiton="0.2s ease-out" data-parent-section="products-section" style="position:absolute; right: -300px; top:-300px; z-index: 1"><img src="images/statues/Story%201/Chariot.png" width="800"></div>
-                    <div class="story2 wrapper-image-statue-7 wrapper-image-statue-7_shadow parallax-image" data-speed="10" data-transiton="0.2s ease-out" data-parent-section="products-section"  style="position:absolute; right: -200px; top:-50px;"><img src="images/statues/Story%202/2%20Shadow.png" width="1000"></div>
-                        <div class="story2 wrapper-image-statue-7 parallax-image" data-speed="30" data-transiton="0.2s ease-out" data-parent-section="products-section" style="position:absolute; right: -100px; top:-50px; z-index: 1"><img src="images/statues/Story%202/2.png" width="1000"></div>
-                    <div class="story3 wrapper-image-statue-7 wrapper-image-statue-7_shadow parallax-image" data-speed="10" data-transiton="0.2s ease-out" data-parent-section="products-section"  style="position:absolute; right: -200px; top:0px;"><img src="images/statues/Story%203/2%20Shadow.png" width="900"></div>
-                        <div class="story3 wrapper-image-statue-7 parallax-image" data-speed="30" data-transiton="0.2s ease-out" data-parent-section="products-section" style="position:absolute; right: -100px; top:-150px; z-index: 1"><img src="images/statues/Story%203/2.png" width="900"></div>
-                    <div class="story4 wrapper-image-statue-7 wrapper-image-statue-7_shadow parallax-image" data-speed="10" data-transiton="0.2s ease-out" data-parent-section="products-section"  style="position:absolute; right: -200px; top:-50px;"><img src="images/statues/Story%204/2%20Shadow.png" width="800"></div>
-                        <div class="story4 wrapper-image-statue-7 parallax-image" data-speed="30" data-transiton="0.2s ease-out" data-parent-section="products-section" style="position:absolute; right: -100px; top:-100px; z-index: 1"><img src="images/statues/Story%204/2.png" width="800"></div>
-                        </div>
-                        <div class="row description">
-                            <div class="col-xl-5 offset-xl-0 col-lg-6 offset-lg-0 col-md-8 offset-md-0 col-sm-8 offset-sm-0 col-8 offset-0">
-                                <p class="small-text" data-aos="fade-up" data-aos-duration="600" data-aos-offset="90" data-aos-once="true" data-aos-once="true"><small class="story1">CHARIOT</small><br><small class="alpha-4 story1">1500 BC</small><small class="story2">SAND CLOCK</small><br><small class="alpha-4 story2">800 AD</small><small class="story3">NAPIER’S BONES</small><br><small class="alpha-4 story3">1600 AD</small><small class="story4">DIAL TELEPHONE</small><br><small class="alpha-4 story4">1878 AD</small></p><h2 data-aos="fade-up" data-aos-delay="100" data-aos-duration="600" data-aos-offset="90" data-aos-once="true" data-aos-once="true">I AM THE<br>CHANGE<br>AROUND</h2>
-                                <p data-aos="fade-up" data-aos-delay="200" data-aos-duration="600" data-aos-offset="90" data-aos-once="true" data-aos-once="true">From revolutions across the globe to the subtle metamorphosis of a butterfly, evolution is the omnipotence of progression witnessed everywhere!
-                                <br><br>
-                                This Tryst, we present to you : <br><i>Evolution - A Spiral in Time</i></p>
-                                <!-- <div data-aos="fade-up" data-aos-delay="300" data-aos-duration="600" data-aos-offset="90" data-aos-once="true" data-aos-once="true"><a href="/labs" class="btn">DISCOVER ROCKA LABS →</a></div> -->
-                            </div>
-                        </div>
-                    </div>
-        </section>
-        <section id="sec3" class="content-section companies-section change-color-content bg_deep_secundary_red section-bg-particles parallax-content" data-bg-offset="400" data-particles-color="_secundary_blue" data-particles-alpha="0.9">
-            <div class="container">
-                <div class="statue">
-                    <div class="story1 wrapper-image-statue-4 wrapper-image-statue-4_shadow parallax-image" data-speed="38" data-transiton="0.2s" data-parent-section="companies-section"  style="position:absolute; left: -500px; top:-150px;"><img src="images/statues/Story%201/cycle_shadow.png" width="1200"></div>
-                        <div class="story1 wrapper-image-statue-4 parallax-image" data-speed="30" data-transiton="0.2s" data-parent-section="companies-section"  style="position:absolute; left: -200px; top:0px; z-index: 1"><img src="images/statues/Story%201/cycle.png" width="700"></div>
-                    <div class="story2 wrapper-image-statue-4 wrapper-image-statue-4_shadow parallax-image" data-speed="38" data-transiton="0.2s" data-parent-section="companies-section"  style="position:absolute; left: -200px; top:-50px;"><img src="images/statues/Story%202/3%20Shadow.png" width="800"></div>
-                        <div class="story2 wrapper-image-statue-4 parallax-image" data-speed="30" data-transiton="0.2s" data-parent-section="companies-section"  style="position:absolute; left: -100px; top:-50px; z-index: 1"><img src="images/statues/Story%202/3.png" width="700"></div>
-                    <div class="story3 wrapper-image-statue-4 wrapper-image-statue-4_shadow parallax-image" data-speed="38" data-transiton="0.2s" data-parent-section="companies-section"  style="position:absolute; left: -500px; top:-250px;"><img src="images/statues/Story%203/3%20Shadow.png" width="1200"></div>
-                        <div class="story3 wrapper-image-statue-4 parallax-image" data-speed="30" data-transiton="0.2s" data-parent-section="companies-section"  style="position:absolute; left: -200px; top:-100px; z-index: 1"><img src="images/statues/Story%203/3.png" width="700"></div>
-                    <div class="story4 wrapper-image-statue-4 wrapper-image-statue-4_shadow parallax-image" data-speed="38" data-transiton="0.2s" data-parent-section="companies-section"  style="position:absolute; left: -500px; top:-150px;"><img src="images/statues/Story%204/3%20Shadow.png" width="1200"></div>
-                        <div class="story4 wrapper-image-statue-4 parallax-image" data-speed="30" data-transiton="0.2s" data-parent-section="companies-section"  style="position:absolute; left: -200px; top:0px; z-index: 1"><img src="images/statues/Story%204/3.png" width="700"></div>
-                        </div>
-                        <div class="row description right">
-                            <div class="col-xl-5 offset-xl-6 col-lg-6 offset-lg-6 col-md-8 offset-md-0 col-sm-8 offset-sm-0 col-8 offset-0">
-                                <p class="small-text" data-aos="fade-up" data-aos-duration="600" data-aos-offset="90" data-aos-once="true" data-aos-once="true"><small class="story1">BICYCLE</small><br><small class="alpha-4 story1">1817 AD</small><small class="story2">MECHANICAL WATCHES</small><br><small class="alpha-4 story2">1700 AD</small><small class="story3">PASCAL CALCULATOR</small><br><small class="alpha-4 story3">1617 AD</small><small class="story4">PUSH BUTTON TELEPHONE</small><br><small class="alpha-4 story4">1963 AD</small></p><h2 data-aos="fade-up" data-aos-delay="100" data-aos-duration="600" data-aos-offset="90" data-aos-once="true" data-aos-once="true">FOOTSTEPS</h2>
-                                <p data-aos="fade-up" data-aos-delay="200" data-aos-duration="600" data-aos-offset="90" data-aos-once="true" data-aos-once="true">Giant names like Sachin & Binny Bansal,Richard Stallman, Kris Gopalkrishnan, Jayati Ghosh, Brian Acton and many more have contributed to our humble endeavour while exhilarating events such as Rude Goldberg, Mine Maze, Junkyard Wars, Ultimate Tic Tac Toe, Cryptex, IPL Auction have been intriguing the inner nerd of everyone making Tryst what it is today.</p>
-                                <!-- <div data-aos="fade-up" data-aos-delay="300" data-aos-duration="600" data-aos-offset="90" data-aos-once="true" data-aos-once="true"><a href="/enterprise" class="btn btn-secundary-blue large-width">DISCOVER ROCKA ENTERPRISE →</a></div> -->
-                            </div>
-                        </div>
-                    </div>
-        </section>
-        <section id="sec4" class="content-section change-color-content bg_black section-bg-particles parallax-content" data-bg-offset="400" data-particles-color="_grey">
-            <div class="container">
-                <div class="statue">
-                    <div class="story1 wrapper-image-statue-6 wrapper-image-statue-6_shadow parallax-image" data-speed="10" data-transiton="0.2s ease-out" data-parent-section="products-section" style="position:absolute; right: -300px; top:-100px;"><img src="images/statues/Story%201/Bike%20Shadow.png" width="1100"></div>
-                        <div class="story1 wrapper-image-statue-6 parallax-image" data-speed="30" data-transiton="0.2s ease-out" data-parent-section="products-section" style="position:absolute; right: -300px; top:-100px; z-index: 1"><img src="images/statues/Story%201/Bike.png" width="1100"></div>
-                    <div class="story2 wrapper-image-statue-6 wrapper-image-statue-6_shadow parallax-image" data-speed="10" data-transiton="0.2s ease-out" data-parent-section="products-section" style="position:absolute; right: -100px; top:-100px;"><img src="images/statues/Story%202/4%20Shadow.png" width="900"></div>
-                        <div class="story2 wrapper-image-statue-6 parallax-image" data-speed="30" data-transiton="0.2s ease-out" data-parent-section="products-section" style="position:absolute; right: -100px; top:-100px; z-index: 1"><img src="images/statues/Story%202/4.png" width="900"></div>
-                    <div class="story3 wrapper-image-statue-6 wrapper-image-statue-6_shadow parallax-image" data-speed="10" data-transiton="0.2s ease-out" data-parent-section="products-section" style="position:absolute; right: -300px; top:-100px;"><img src="images/statues/Story%203/4%20Shadow.png" width="1100"></div>
-                        <div class="story3 wrapper-image-statue-6 parallax-image" data-speed="30" data-transiton="0.2s ease-out" data-parent-section="products-section" style="position:absolute; right: -300px; top:-100px; z-index: 1"><img src="images/statues/Story%203/4.png" width="1100"></div>
-                    <div class="story4 wrapper-image-statue-6 wrapper-image-statue-6_shadow parallax-image" data-speed="10" data-transiton="0.2s ease-out" data-parent-section="products-section" style="position:absolute; right: -300px; top:-300px;"><img src="images/statues/Story%204/4%20Shadow.png" width="1100"></div>
-                        <div class="story4 wrapper-image-statue-6 parallax-image" data-speed="30" data-transiton="0.2s ease-out" data-parent-section="products-section" style="position:absolute; right: -300px; top:-300px; z-index: 1"><img src="images/statues/Story%204/4.png" width="1100"></div>
-                        </div>
-                        <div class="row description" style="color: #fff;">
-                            <div class="col-xl-5 offset-xl-0 col-lg-6 offset-lg-0 col-md-8 offset-md-0 col-sm-8 offset-sm-0 col-8 offset-0">
-                                <p class="small-text" data-aos="fade-up" data-aos-duration="600" data-aos-offset="90" data-aos-once="true" data-aos-once="true"><small class="story1">MOTORCYCLE</small><br><small class="alpha-4 story1">1885 AD</small><small class="story2">DIGITAL WATCHES</small><br><small class="alpha-4 story2">1970 AD</small><small class="story3">BABBAGE ANALYTICS</small><br><small class="alpha-4 story3">1837 AD</small><small class="story4">MOBILE PHONE</small><br><small class="alpha-4 story4">1973 AD</small></p><h2 data-aos="fade-up" data-aos-delay="100" data-aos-duration="600" data-aos-offset="90" data-aos-once="true" data-aos-once="true">TRYST<br>IN<br>FIGURES</h2>
-                                <p data-aos="fade-up" data-aos-delay="200" data-aos-duration="600" data-aos-offset="90" data-aos-once="true" data-aos-once="true">
-                                	<table border="0" cellpadding="7" cellspacing="5">
-	                                	<tr><th>45000+</th><td>Footfall</td></tr>
-										<tr><th>500+</th><td>Colleges</td></tr>
-										<tr><th>7 Lakh+</th><td>Prizes</td></tr>
-										<tr><th>20+</th><td>Countries</td></tr>
-										<tr><th>85K+</th><td>Followers</td></tr>
-									</table>
-                                </p>
-                                <!-- <div data-aos="fade-up" data-aos-delay="300" data-aos-duration="600" data-aos-offset="90" data-aos-once="true" data-aos-once="true"><a href="/labs" class="btn">DISCOVER ROCKA LABS →</a></div> -->
-                            </div>
-                        </div>
-                    </div>
-        </section>
-        <section id="sec5" class="content-section boost-section change-color-content bg_secundary_red section-bg-particles parallax-content" data-bg-offset="400" data-particles-color="_grey">
-            <div class="container">
-                <div class="statue">
-                    <div class="story1 wrapper-image-statue-6 wrapper-image-statue-6_shadow parallax-image" data-speed="20" data-transiton="0.1s" data-parent-section="boost-section" style="position:absolute; left: -300px; top:-150px;"><img src="images/statues/Story%201/car_shadow.png" width="900"></div>
-                        <div class="story1 wrapper-image-statue-6 parallax-image" data-speed="30" data-transiton="0.3s" data-parent-section="boost-section" style="position:absolute; left: -250px; top:-200px; z-index: 1"><img src="images/statues/Story%201/car.png" width="800"></div>
-                    <div class="story2 wrapper-image-statue-6 wrapper-image-statue-6_shadow parallax-image" data-speed="20" data-transiton="0.1s" data-parent-section="boost-section" style="position:absolute; left: -100px; top:-50px;"><img src="images/statues/Story%202/5%20Shadow.png" width="800"></div>
-                        <div class="story2 wrapper-image-statue-6 parallax-image" data-speed="30" data-transiton="0.3s" data-parent-section="boost-section" style="position:absolute; left: -50px; top:-100px; z-index: 1"><img src="images/statues/Story%202/5.png" width="700"></div>
-                    <div class="story3 wrapper-image-statue-6 wrapper-image-statue-6_shadow parallax-image" data-speed="20" data-transiton="0.1s" data-parent-section="boost-section" style="position:absolute; left: -300px; top:-50px;"><img src="images/statues/Story%203/5%20Shadow.png" width="900"></div>
-                        <div class="story3 wrapper-image-statue-6 parallax-image" data-speed="30" data-transiton="0.3s" data-parent-section="boost-section" style="position:absolute; left: -250px; top:-100px; z-index: 1"><img src="images/statues/Story%203/5.png" width="800"></div>
-                    <div class="story4 wrapper-image-statue-6 wrapper-image-statue-6_shadow parallax-image" data-speed="20" data-transiton="0.1s" data-parent-section="boost-section" style="position:absolute; left: -300px; top:-150px;"><img src="images/statues/Story%204/5%20Shadow.png" width="1100"></div>
-                        <div class="story4 wrapper-image-statue-6 parallax-image" data-speed="30" data-transiton="0.3s" data-parent-section="boost-section" style="position:absolute; left: -200px; top:-150px; z-index: 1"><img src="images/statues/Story%204/5.png" width="1000"></div>
-                        </div>
-                        <div class="row description right">
-                            <div class="col-xl-5 offset-xl-6 col-lg-6 offset-lg-6 col-md-8 offset-md-0 col-sm-8 offset-sm-0 col-8 offset-0">
-                                <p class="small-text" data-aos="fade-up" data-aos-duration="600" data-aos-offset="90" data-aos-once="true" data-aos-once="true"><small class="story1">BMW E34</small><br><small class="alpha-4 story1">1987 AD</small><small class="story2">SMART WATCH</small><br><small class="alpha-4 story2">1998 AD</small><small class="story3">CAL TECH</small><br><small class="alpha-4 story3">1958 AD</small><small class="story4">SMARTPHONE</small><br><small class="alpha-4 story4">1992 AD</small></p><h2 data-aos="fade-up" data-aos-delay="100" data-aos-duration="600" data-aos-offset="90" data-aos-once="true" data-aos-once="true" style="line-height: 1.2em">हौसला !</h2>
-                                <p data-aos="fade-up" data-aos-delay="200" data-aos-duration="600" data-aos-offset="90" data-aos-once="true" data-aos-once="true">Tryst 2019 proudly announces, 'हौसला-Capability wins over Disability', a social initiative to empower the differently-abled using technology. We hope for everyone to come together on this journey and help evolve India into a more aware, technologically advanced, accessible and obstruction free country!</p>
-                                <!-- <div data-aos="fade-up" data-aos-delay="300" data-aos-duration="600" data-aos-offset="90" data-aos-once="true" data-aos-once="true"><a href="/enterprise" class="btn btn-secundary-blue large-width">DISCOVER ROCKA ENTERPRISE →</a></div> -->
-                            </div>
-                        </div>
-                    </div>
-        </section>
-        <section class="content-section change-color-content subscribe-section bg_deep_primary" data-color-change="static" data-bg-offset="-1000">
-            <div class="container">
-                <form action="https://tryst-iitd.com/register" method="GET" target="_blank"><input type="hidden" name="u" value="ee60ad448dd8382bbc932a006"> <input type="hidden" name="id" value="d8c0e2b77b">
-                    <div class="row">
-                        <div class="col-xl-8 col-lg-12 col-md-12 col-sm-12 col-12 input-wrapper"><input class="rocka-input transparent without_border" type="email" name="MERGE0" placeholder="Register! Enter your email…" data-aos="fade" data-aos-duration="1500" data-aos-easing="ease-in-sine" data-aos-once="true" autocomplete="off" autocapitalize="off" autocorrect="off" required="required"></div>
-                        <div class="col-xl-4 col-lg-12 col-md-12 col-sm-12 col-12 button-wrapper"><button class="btn" data-aos="fade" data-aos-duration="1500" data-aos-easing="ease-in-sine" data-aos-once="true">REGISTER</button></div>
-                    </div>
-                </form>
+                </div>
             </div>
         </section>
                 <footer class="content-section footer change-color-content bg_primary" data-color-change="static">
@@ -731,6 +549,7 @@
             </div>
         </div>
         <link rel="stylesheet" type="text/css" href="../cloud.typography.com/7098596/7816992/css/fonts.html" lazyload="1">
+        <!-- <script type="text/javascript" src="js/admin_login.js"></script> -->
         <script src="js/dist/vendors.js%401547178500"></script>
         <script src="js/dist/dist.js%401547178500"></script>
         <script>
@@ -784,5 +603,5 @@
 </body>
 
 
-<!-- Mirrored from tryst-iitd.com/ by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 16 Feb 2019 05:00:50 GMT -->
+<!-- Mirrored from tryst-iitd.com/team by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 16 Feb 2019 05:01:00 GMT -->
 </html>

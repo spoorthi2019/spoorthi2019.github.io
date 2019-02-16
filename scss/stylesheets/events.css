@@ -1,0 +1,124 @@
+
+		@media (max-width: 991px) {
+			section {
+				min-height: 100vh;
+			}
+			section img {
+				display: none;
+			}
+			#sec1 {
+				/*background-image: url('images/statues/Story 1/mobile/stone_mobile.png');*/
+				background-repeat: no-repeat;
+				background-size: 100%;
+			}
+			#sec2 {
+				/*background-image: url('images/statues/Story 1/mobile/Chariot Combined.png');*/
+				background-repeat: no-repeat;
+				background-size: 100%;
+				background-position: 31vw 50vh;
+			}
+			#sec3 {
+				/*background-image: url('images/statues/Story 1/mobile/cycle combined.png');*/
+				background-repeat: no-repeat;
+				background-size: 100%;
+				background-position: 30vw 50vh;
+			}
+			#sec4 {
+				/*background-image: url('images/statues/Story 1/mobile/Bike Combined.png');*/
+				background-repeat: no-repeat;
+				background-size: 100%;
+				background-position: 38vw;
+			}
+			#sec5 {
+				/*background-image: url('images/statues/Story 1/mobile/car_mobile.png');*/
+				background-repeat: no-repeat;
+				background-size: 100%;
+				background-position: 40vw 0vw;
+			}
+			#scroll_more {
+				/*position: absolute;*/
+				text-align: center;
+				padding-top: 30vw;
+				/*bottom: 10vw;*/
+			}
+		}
+		@media (min-width: 991px) {
+			#headerFixedTop {
+				top: -50px;
+			}
+            .workshops {
+                max-width: 17vw;
+            }
+		}
+		.story1 {
+			display: none;
+		}
+		.story2 {
+			display: none;
+		}
+		.story3 {
+			display: none;
+		}
+		.story4 {
+			display: none;
+		}
+/*		img {
+			-webkit-transition: opacity 1s ease-in-out;
+			-moz-transition: opacity 1s ease-in-out;
+			-o-transition: opacity 1s ease-in-out;
+			transition: opacity 1s ease-in-out;
+		}*/
+		#gal11, #gal12, #gal13, #gal21, #gal22, #gal23 {
+			border-radius: 50%;
+			border: #fff solid 1px;
+		}
+
+		.workshops {
+			border-radius: 50%;
+			/*border: #fff solid 1px;*/
+			width: 100%;
+			/*max-width: 10vw;*/
+			cursor: pointer;
+            display: block !important;
+		}
+		.register {
+			background-color: #cfc;
+			opacity: 0.5;
+			min-height: 7vh;
+			border-radius: 0px;
+
+		}
+
+		.item1 { grid-area: header; }
+		.item2 { grid-area: menu; }
+		.item3 { grid-area: main; }
+		.item4 { grid-area: right; }
+		.item5 { grid-area: footer; }
+
+		.grid-container {
+		  display: grid;
+		  grid-template-areas:
+		    'header header header header header header header header header header header header'
+		    'menu menu menu main main main main main main main right right'
+		    'menu menu menu footer footer footer footer footer footer footer footer footer';
+		  /*grid-gap: 10px;
+		  background-color: #2196F3;
+		  padding: 10px;*/
+		  grid-gap: 1px;
+		  background-color: #111;
+		  padding: 1px;
+		  /*height: auto;*/
+		  overflow: scroll;
+		}
+
+		.grid-container > div {
+		  background-color: rgba(0, 0, 0, 0.8);
+		  text-align: center;
+		  padding: 1.2em;
+		  font-size: 2em;
+		}
+
+		.eventsModal {
+			display: none;
+			overflow: scroll;
+		}
